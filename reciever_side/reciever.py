@@ -33,13 +33,12 @@ def playsound(bitstring):
 		else:
 			os.system('paplay Networks\ 2.wav')
 
-def errordetect(string):
+def detecterror(string):
 	
 	string1= string[:-9]
 	string2= string1
 
 	length=len(string1)
-	xtralength= 20-length
 	paritybits= string[-9:]
 	if length <20:
 		string1= string1+ '0'*(20-length)
@@ -72,14 +71,17 @@ def errordetect(string):
 			array[row*5+column]=0
 		else:
 			array[row*5+column]=1
+		print(array)
 		print("error is corrected in: ",row*5+column+1)
-		return ''.join([str(i) for i in array])[:-xtralength]
+		string="".join([str(i) for i in array])
+		string= string[:length]
+		return string
 		
 	if row_faults>0 or column_faults>0:
-		print("error has occurred in: ", string1[:-xtralength])
-		return -1
+		print("error has occurred in: ", string1[:length])
+		return "-1"
 	else:
-		return string1
+		return string2
 
 
 	# string1= string[:-9]
@@ -125,18 +127,19 @@ def decoder(inp):
 
 
 
-fullrecord = 33
-halfrecord = 17
+fullrecord = 2
+halfrecord = 1
 sleeptime = 2
 recieved = 0
 print("Program Started, Press enter to continue")
 
 temp1=input()
+print("Strating Recording for: ", fullrecord, " seconds...")
 recording(fullrecord)
 print("Done Recording, Now Processing")
 s=os.popen('bash script.sh').read()
+s = "101011000100110111111011000111000110001100"
 print("Recieved text is: ", s)
-
 
 s = decoder(s)
 print(s)
@@ -148,7 +151,7 @@ print(errordetect)
 
 while recieved !=1:
 
-	if errordetect[0]!= "-1" and errordetect[0] !="-1":
+	if errordetect[0]!= "-1" and errordetect[1] !="-1":
 		print("Correct sequence recieved: ", errordetect)
 		print("Press enter key to send an ACK")
 		temp1=input()
@@ -158,7 +161,6 @@ while recieved !=1:
 		time.sleep(sleeptime)
 
 		playsound("11")
-		print ("correct recieved parity is " + s)
 		print("Recieved Completed")
 		print("Correct sequence: ", errordetect)
 
@@ -167,11 +169,11 @@ while recieved !=1:
 		temp1=input()
 
 		os.system("paplay Networks\ 1.wav")
-		time.sleep(2)
+		time.sleep(sleeptime)
 
-		if errordetect[0] == "-1" and errordetect[0] =="-1":
+		if errordetect[0] == "-1" and errordetect[1] =="-1":
 			playsound("001")
-			Print("NACK send, Press enter to start recording of Retransmission")
+			print("NACK send, Press enter to start recording of Retransmission")
 			
 			temp1=input()
 			print("Now Recording ...")
@@ -185,7 +187,7 @@ while recieved !=1:
 
 		elif errordetect[0] == "-1":
 			playsound("00")
-			Print("NACK send, Press enter to start recording of Retransmission")
+			print("NACK send, Press enter to start recording of Retransmission")
 
 			temp1=input()
 			print("Now Recording ...")
@@ -195,9 +197,9 @@ while recieved !=1:
 			errordetect[0] = detecterror(s[0])
 
 
-		elif errordetect[1] == "-1"
+		elif errordetect[1] == "-1":
 			playsound("01")
-			Print("NACK send, Press enter to start recording of Retransmission")
+			print("NACK send, Press enter to start recording of Retransmission")
 
 			temp1=input()
 			print("Now Recording ...")

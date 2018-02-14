@@ -30,7 +30,7 @@ def parity_maker (string):
 	mat.resize(4,5)
 	row_sums= mat.sum(axis=1)
 	column_sums= mat.sum(axis=0)
-	
+	string= string[:length]
 	for i in range(4):
 		string= string+ str(row_sums.item(i)%2)
 
@@ -73,9 +73,6 @@ def transmit(string_array):
 def errormaker(String):
 	return -1
 
-print("Strating Transmission")
-os.system('paplay Networks\ 1.wav')
-time.sleep(2)
 
 ACK = 0
 ACKrecordtime = 4
@@ -109,7 +106,7 @@ while ACK !=1:
 	print("ACK status: ", ACK)
 	print("Press enter to start recording for ACK")
 	temp1 = input()
-
+	print("Now Recording")
 	recording(ACKrecordtime)
 	s=os.popen('bash script.sh').read()
 
@@ -118,9 +115,9 @@ while ACK !=1:
 
 		if s == "001":
 			transmit_array = inp_str_encode
-		elif s == "00"
+		elif s == "00":
 			transmit_array = encode(inp_str_parity[0])
-		elif s == "01"
+		elif s == "01":
 			transmit_array = encode(inp_str_parity[1])
 
 		print("NACK recieved, Press enter to start Retransmission of parity/encode: ",  transmit_array)
@@ -131,7 +128,7 @@ while ACK !=1:
 		time.sleep(sleeptime)
 		transmit(transmit_array)
 
-	elif s == "11"
+	elif s == "11":
 		ACK=1
 		print ("Transmission Completed Successfully")
 
