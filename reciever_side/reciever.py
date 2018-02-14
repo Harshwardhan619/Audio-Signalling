@@ -127,7 +127,8 @@ def decoder(inp):
 
 
 
-fullrecord = 35
+fullrecord = 27
+
 halfrecord = 15
 sleeptime = 2
 recieved = 0
