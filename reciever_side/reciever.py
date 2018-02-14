@@ -127,10 +127,11 @@ def decoder(inp):
 
 
 
-fullrecord = 2
-halfrecord = 1
+fullrecord = 35
+halfrecord = 15
 sleeptime = 2
 recieved = 0
+playsound("1")
 print("Program Started, Press enter to continue")
 
 temp1=input()
@@ -138,7 +139,7 @@ print("Strating Recording for: ", fullrecord, " seconds...")
 recording(fullrecord)
 print("Done Recording, Now Processing")
 s=os.popen('bash script.sh').read()
-s = "101011000100110111111011000111000110001100"
+
 print("Recieved text is: ", s)
 
 s = decoder(s)
