@@ -70,8 +70,21 @@ def playsound(bitstring):
 def transmit(string_array):
 	playsound(string_array)
 
-def errormaker(String):
-	return -1
+def errormaker(string1,string2,error1=[],error2=[]):
+	string1= list(string1)
+	string2= list(string2)
+	for x in error1:
+		string1[x-1]= str(int(not int(string1[x-1])))
+
+	for y in error2:
+		string2[y-1]= str(int(not int(string2[y-1])))
+	string1= "".join(string1)
+	string2= "".join(string2)
+
+	return [string1,string2]
+
+
+
 
 
 ACK = 0
@@ -88,16 +101,19 @@ inp_str_parity[1] = parity_maker(inp_str[1])
 
 print(inp_str_parity)
 
-inp_str_encode = sentinel(inp_str_parity)
+
+
+
+
+print(inp_str_parity)
+inp_str_corrupt = errormaker(inp_str_parity[0], inp_str_parity[1], [1,3], [])
+
+inp_str_encode = sentinel(inp_str_corrupt)
 inp_str_corrupt = inp_str_encode
-
-print(inp_str_corrupt)
-
-# errormaker(inp_str_parity, sys.argv[3], sys.argv[4])
 
 transmit_array = inp_str_corrupt
 
-print("Starting Transmission of: "  +  transmit_array)
+print("Starting Transmission of: ",  transmit_array)
 os.system('paplay Networks\ 1.wav')
 time.sleep(sleeptime)
 transmit(transmit_array)
@@ -113,12 +129,12 @@ while ACK !=1:
 	print("Recorded, Now Processing ...")
 	if s[0] == "0":	
 
-		if s == "001":
+		if s[:3] == "001":
 			transmit_array = inp_str_encode
-		elif s == "00":
-			transmit_array = encode(inp_str_parity[0])
-		elif s == "01":
-			transmit_array = encode(inp_str_parity[1])
+		elif s[:2] == "00":
+			transmit_array = encoder(inp_str_parity[0])
+		elif s[:2] == "01":
+			transmit_array = encoder(inp_str_parity[1])
 
 		print("NACK recieved, Press enter to start Retransmission of parity/encode: ",  transmit_array)
 		temp1=input()
@@ -128,7 +144,7 @@ while ACK !=1:
 		time.sleep(sleeptime)
 		transmit(transmit_array)
 
-	elif s == "11":
+	elif s[0] == "1" and s[1] == "1":
 		ACK=1
 		print ("Transmission Completed Successfully")
 
