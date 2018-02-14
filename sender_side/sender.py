@@ -73,10 +73,14 @@ def transmit(string_array):
 def errormaker(String):
 	return -1
 
+print("Strating Transmission")
 os.system('paplay Networks\ 1.wav')
 time.sleep(2)
 
 ACK = 0
+ACKrecordtime = 4
+sleeptime = 2
+
 inp_str = ["0"]*2
 inp_str[0] = sys.argv[1]
 inp_str[1] = sys.argv[2]
@@ -97,25 +101,37 @@ print(inp_str_corrupt)
 transmit_array = inp_str_corrupt
 
 print("Starting Transmission of: "  +  transmit_array)
+os.system('paplay Networks\ 1.wav')
+time.sleep(sleeptime)
 transmit(transmit_array)
 
 while ACK !=1:
-	print("ACK status: " + str(ACK))
+	print("ACK status: ", ACK)
 	print("Press enter to start recording for ACK")
 	temp1 = input()
 
-	recording(3)
+	recording(ACKrecordtime)
 	s=os.popen('bash script.sh').read()
 
 	print("Recorded, Now Processing ...")
-	if s[0] != 1:
-		transmit_array= inp_str_encode
-		print("NACK recieved, Starting Retransmission of:"  +  transmit_array)
+	if s[0] == "0":	
+
+		if s == "001":
+			transmit_array = inp_str_encode
+		elif s == "00"
+			transmit_array = encode(inp_str_parity[0])
+		elif s == "01"
+			transmit_array = encode(inp_str_parity[1])
+
+		print("NACK recieved, Press enter to start Retransmission of parity/encode: ",  transmit_array)
+		temp1=input()
 
 		os.system('paplay Networks\ 1.wav')
-		time.sleep(2)
+		print("Starting Transmission of: "  +  transmit_array)
+		time.sleep(sleeptime)
 		transmit(transmit_array)
-	else:
+
+	elif s == "11"
 		ACK=1
 		print ("Transmission Completed Successfully")
 
