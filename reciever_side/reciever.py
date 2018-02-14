@@ -5,7 +5,6 @@ import time
 import sounddevice as sd
 import numpy as np
 from scipy.io.wavfile import write
-import os
 
 # s=os.popen('bash script.sh').read()
 
@@ -35,7 +34,7 @@ def playsound(bitstring):
 		else:
 			os.system('paplay Networks\ 2.wav')
 
-def detecterror(string):
+def errordetect(string):
 	string1= string[:-9]
 	length=len(string1)
 	paritybits= string[-9:]
@@ -67,53 +66,59 @@ def detecterror(string):
 			# print(i-m+1, "column")
 	# print(row_faults,column_faults)
 	if row_faults>0 or column_faults>0:
-		print("error has occurred, parity is: " + string1)
-		return '-1'
+		print("error has occurred")
+		return "-1"
 	else:
 		return string1
 
-import re
-import sys
 def decoder(inp):
 	[a,b]=re.subn('01111110',' ',inp)
 	[c,d]=re.subn('111110','11111',a)
-	return c.split(' ')
+	return c
 
 
 recieved = 0
-print("Press enter to continue")
+print("Press enter key to continue")
+temp1=input()
 
-xyz=input()
-recording(33)
-print("Done Recording, Now Processing")
+print("Now Recording ...")
+recording(20)
 s=os.popen('bash script.sh').read()
-print("Recieved text is" + s)
-
-
-s = decoder(s)
-print(s)
-errordetect = ["0"]*2
-errordetect[0] = detecterror(s[0])
-errordetect[1] = detecterror(s[1])
-
-print(errordetect)
+errordetect = errordetect(s)
 
 while recieved !=1:
 
-	if errordetect[0]!= '-1' and errordetect[0] !='-1':
+	if errordetect != "-1":
+		print("Correct sequence recieved. Press enter key to send an ACK")
+		temp1=input()
+
 		recieved=1
+		os.system("paplay Networks\ 1.wav")
+		time.sleep(2)
+
 		playsound("11")
-		print ("correct recieved parity is " + s[0] + " + " + s[1])
-		print ("Recieved Completed")
-		print(errordetect)
+		print ("correct recieved parity is " + s)
+		print("Recieved Completed")
+		decoded_text = decoder(errordetect)
+		print(decoded_text)
 
 	else:
-		recording(33)
-		s=os.popen('bash script.sh').read()
-		s=decoder(s)
-		errordetect[0] = detecterror(s[0])
-		errordetect[1] = detecterror(s[1])
+		print("Incorrect sequence recieved. Press enter key to send an NACK")
+		temp1=input()
+
+		recieved=1
+		os.system("paplay Networks\ 1.wav")
+		time.sleep(2)
+
 		playsound("00")
+		Print("NACK send, Press enter to start recording of Retransmission")
+
+		temp1=input()
+		print("Now Recording ...")
+
+		recording(20)
+		s=os.popen('bash script.sh').read()
+		errordetect = errordetect(s)
 
 
 #waiting for ACK
