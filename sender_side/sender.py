@@ -140,6 +140,8 @@ while send_status !=1:
 			transmit_array = encoder(inp_str_parity[0]) 
 		elif temp1 == "c1":
 			transmit_array = encoder(inp_str_parity[1])
+		print("Status changed, Press enter to transmit")
+		temp1 = input()
 		transmit(transmit_array)
 
 	elif s[0] == "1":
@@ -152,8 +154,9 @@ while send_status !=1:
 			transmit_array = encoder(inp_str_parity[0]) 
 		elif temp1 == "c1":
 			transmit_array = encoder(inp_str_parity[1])
-		changestatus(temp1)
-
-		send_status = 1
+		elif temp1 == "a" and temp1 == "":
+			send_status = 1
+			print ("Transmission Completed Successfully")
+			break
 
 print ("Transmission Completed Successfully")
