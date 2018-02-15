@@ -39,54 +39,56 @@ def transmit(string_array):
 	playsound(string_array)
 
 def detecterror(string):
-	
-	string1= string[:-9]
-	string2= string1
+	try:
+		string1= string[:-9]
+		string2= string1
 
-	length=len(string1)
-	paritybits= string[-9:]
-	if length <20:
-		string1= string1+ '0'*(20-length)
-	array= [int(i) for i in list(string1)]
-	mat= np.matrix(array)
-	mat.resize(4,5)
-	row_sums= mat.sum(axis=1)
-	column_sums= mat.sum(axis=0)
+		length=len(string1)
+		paritybits= string[-9:]
+		if length <20:
+			string1= string1+ '0'*(20-length)
+		array= [int(i) for i in list(string1)]
+		mat= np.matrix(array)
+		mat.resize(4,5)
+		row_sums= mat.sum(axis=1)
+		column_sums= mat.sum(axis=0)
 
-	# print(row_sums,column_sums)
-	# print(paritybits)
-	row_faults=0
-	row=-1
-	column=-1
-	for i in range(4):
-		if row_sums.item(i)%2 !=int(paritybits[i]):
-			row=i
-			row_faults+=1
+		# print(row_sums,column_sums)
+		# print(paritybits)
+		row_faults=0
+		row=-1
+		column=-1
+		for i in range(4):
+			if row_sums.item(i)%2 !=int(paritybits[i]):
+				row=i
+				row_faults+=1
 
-	column_faults=0
-	for i in range(4,9):
-		if column_sums.item(i-4)%2!=int(paritybits[i]):
-			column=i-4
+		column_faults=0
+		for i in range(4,9):
+			if column_sums.item(i-4)%2!=int(paritybits[i]):
+				column=i-4
+				
+				column_faults+=1
+				# print(i-m+1, "column")
+		# print(row_faults,column_faults)
+		if row_faults==1 and column_faults==1:
+			if array[row*5+column]==1:
+				array[row*5+column]=0
+			else:
+				array[row*5+column]=1
+			print(array)
+			print("error is corrected in: ",row*5+column+1)
+			string="".join([str(i) for i in array])
+			string= string[:length]
+			return string
 			
-			column_faults+=1
-			# print(i-m+1, "column")
-	# print(row_faults,column_faults)
-	if row_faults==1 and column_faults==1:
-		if array[row*5+column]==1:
-			array[row*5+column]=0
+		if row_faults>0 or column_faults>0:
+			print("error has occurred in: ", string1[:length])
+			return "-1"
 		else:
-			array[row*5+column]=1
-		print(array)
-		print("error is corrected in: ",row*5+column+1)
-		string="".join([str(i) for i in array])
-		string= string[:length]
-		return string
-		
-	if row_faults>0 or column_faults>0:
-		print("error has occurred in: ", string1[:length])
+			return string2
+	except:
 		return "-1"
-	else:
-		return string2
 
 def decoder(inp):
 	[a,b]=re.subn('01111110',' ',inp)
@@ -94,7 +96,7 @@ def decoder(inp):
 	return c.split(' ')
 
 
-fullrecord = 27
+fullrecord = 35
 halfrecord = 15
 sleeptime = 2
 recieved = 0
@@ -110,9 +112,11 @@ print("Recieved text is: ", s)
 
 s = decoder(s)
 print(s)
+
 errordetect = ["0"]*2
 errordetect[0] = detecterror(s[0])
 errordetect[1] = detecterror(s[1])
+
 
 print(errordetect)
 
