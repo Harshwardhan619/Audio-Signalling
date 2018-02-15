@@ -86,7 +86,7 @@ def errormaker(string1,string2,error1=[],error2=[]):
 
 	return [string1,string2]
 
-
+ 
 send_status = 0
 ACKrecordtime = 4
 sleeptime = 2
@@ -99,11 +99,13 @@ inp_str_parity = ["0"]*2
 inp_str_parity[0] = parity_maker(inp_str[0])
 inp_str_parity[1] = parity_maker(inp_str[1])
 
+
 print("The Parity made is: ",inp_str_parity)
 inp_str_encode = sentinel(inp_str_parity)
-
-inp_str_corrupt = errormaker(inp_str_parity[0], inp_str_parity[1], [1,3], [])
+print("Encoded string is: ", inp_str_encode)
+inp_str_corrupt = errormaker(inp_str_parity[0], inp_str_parity[1], [1,7], [5])
 inp_str_corrupt = sentinel(inp_str_corrupt)
+print("Courrupted string is: ", inp_str_corrupt)
 
 transmit_array = inp_str_corrupt
 transmit(transmit_array)
@@ -111,21 +113,21 @@ transmit(transmit_array)
 while send_status !=1:
 	print("ACK status: ", send_status)
 	print("Press enter to start recording for ACK")
-
 	temp1 = input()
 	print("Now Recording")
 	recording(ACKrecordtime)
 	s=os.popen('bash script.sh').read()
 
 	print("Recorded, Now Processing ...")
-	if True :#s[0] == "0":	
+	if s[0] == "0":	
 
 		if s[:3] == "001":
 			transmit_array = inp_str_encode
+			print(transmit_array)
 		elif s[:2] == "00":
-			transmit_array = encoder(inp_str_parity[0])
+			transmit_array = inp_str_parity[0]
 		elif s[:2] == "01":
-			transmit_array = encoder(inp_str_parity[1])
+			transmit_array = inp_str_parity[1]
 
 		print("NACK (", s, ") recieved, change ACK/NACK status or press enter to start Retransmission of parity/encode: ",  transmit_array)
 		temp1=input()
@@ -137,11 +139,14 @@ while send_status !=1:
 		elif temp1 == "c01":
 			transmit_array = inp_str_encode
 		elif temp1 == "c0":
-			transmit_array = encoder(inp_str_parity[0]) 
+			transmit_array = inp_str_parity[0]
 		elif temp1 == "c1":
-			transmit_array = encoder(inp_str_parity[1])
-		print("Status changed, Press enter to transmit")
-		temp1 = input()
+			transmit_array = inp_str_parity[1]
+
+		if temp1 != "":
+			print("Status changed, Press enter to transmit")
+			temp1 = input()
+
 		transmit(transmit_array)
 
 	elif s[0] == "1":
@@ -154,7 +159,7 @@ while send_status !=1:
 			transmit_array = encoder(inp_str_parity[0]) 
 		elif temp1 == "c1":
 			transmit_array = encoder(inp_str_parity[1])
-		elif temp1 == "a" and temp1 == "":
+		elif temp1 == "a" or temp1 == "":
 			send_status = 1
 			print ("Transmission Completed Successfully")
 			break
