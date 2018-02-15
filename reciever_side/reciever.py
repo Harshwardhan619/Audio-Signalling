@@ -91,13 +91,15 @@ def detecterror(string):
 		return "-1"
 
 def decoder(inp):
-	[a,b]=re.subn('01111110',' ',inp)
-	[c,d]=re.subn('111110','11111',a)
-	return c.split(' ')
-
+	try:
+		[a,b]=re.subn('01111110',' ',inp)
+		[c,d]=re.subn('111110','11111',a)
+		return c.split(' ')
+	except:
+		return ["00001", "00001"]
 
 fullrecord = 35
-halfrecord = 15
+halfrecord = 17
 sleeptime = 2
 recieved = 0
 print("Program Started, Press enter to continue")
@@ -159,7 +161,7 @@ while recieved !=1:
 			print("Now Recording ...")
 			recording(halfrecord)
 			s=os.popen('bash script.sh').read()
-			s = decoder(s)
+			print("Recieved sequence is: ",s)
 			errordetect[0] = detecterror(s[0])
 
 
@@ -168,9 +170,9 @@ while recieved !=1:
 			print("NACK send, Press enter to start recording of Retransmission")
 
 			temp1=input()
-			print("Now Recording ...")
+			print("Recieved sequence is: ",s)
 			recording(halfrecord)
-			s = decoder(s)
+			print(s)
 			errordetect[1] = detecterror(s[1])
 
 
