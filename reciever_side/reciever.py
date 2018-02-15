@@ -94,7 +94,7 @@ def decoder(inp):
 	return c.split(' ')
 
 
-fullrecord = 27
+fullrecord = 35
 halfrecord = 15
 sleeptime = 2
 recieved = 0
