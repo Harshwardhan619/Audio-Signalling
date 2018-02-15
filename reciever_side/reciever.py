@@ -33,6 +33,11 @@ def playsound(bitstring):
 		else:
 			os.system('paplay Networks\ 2.wav')
 
+def transmit(string_array):
+	playsound("1")
+	time.sleep(sleeptime)
+	playsound(string_array)
+
 def detecterror(string):
 	
 	string1= string[:-9]
@@ -83,60 +88,20 @@ def detecterror(string):
 	else:
 		return string2
 
-
-	# string1= string[:-9]
-	# length=len(string1)
-	# paritybits= string[-9:]
-	# if length <20:
-	# 	string1= string1+ '0'*(20-length)
-	# array= [int(i) for i in list(string1)]
-	# mat= np.matrix(array)
-	# print(mat)
-	# mat.resize(4,5)
-	# row_sums= mat.sum(axis=1)
-	# column_sums= mat.sum(axis=0)
-
-	# # print(row_sums,column_sums)
-	# # print(paritybits)
-	# row_faults=0
-	# row=-1
-	# column=-1
-	# for i in range(4):
-	# 	if row_sums.item(i)%2 !=int(paritybits[i]):
-	# 		row=i
-	# 		row_faults+=1
-
-	# column_faults=0
-	# for i in range(4,9):
-	# 	if column_sums.item(i-4)%2!=int(paritybits[i]):
-	# 		column=i-4
-			
-	# 		column_faults+=1
-	# 		# print(i-m+1, "column")
-	# # print(row_faults,column_faults)
-	# if row_faults>0 or column_faults>0:
-	# 	print("error has occurred")
-	# 	return "-1"
-	# else:
-	# 	return string1
-
 def decoder(inp):
 	[a,b]=re.subn('01111110',' ',inp)
 	[c,d]=re.subn('111110','11111',a)
 	return c.split(' ')
 
 
-
 fullrecord = 27
-
 halfrecord = 15
 sleeptime = 2
 recieved = 0
-playsound("1")
 print("Program Started, Press enter to continue")
 
 temp1=input()
-print("Strating Recording for: ", fullrecord, " seconds...")
+print("Starating recording for: ", fullrecord, " seconds...")
 recording(fullrecord)
 print("Done Recording, Now Processing")
 s=os.popen('bash script.sh').read()
@@ -159,10 +124,7 @@ while recieved !=1:
 		temp1=input()
 
 		recieved=1
-		os.system("paplay Networks\ 1.wav")
-		time.sleep(sleeptime)
-
-		playsound("11")
+		transmit("1")
 		print("Recieved Completed")
 		print("Correct sequence: ", errordetect)
 
@@ -170,11 +132,9 @@ while recieved !=1:
 		print("Incorrect sequence recieved. Press enter key to send an NACK")
 		temp1=input()
 
-		os.system("paplay Networks\ 1.wav")
-		time.sleep(sleeptime)
-
 		if errordetect[0] == "-1" and errordetect[1] =="-1":
-			playsound("001")
+
+			transmit("001")
 			print("NACK send, Press enter to start recording of Retransmission")
 			
 			temp1=input()
@@ -188,7 +148,7 @@ while recieved !=1:
 			errordetect[1] = detecterror(s[1])
 
 		elif errordetect[0] == "-1":
-			playsound("00")
+			transmit("00")
 			print("NACK send, Press enter to start recording of Retransmission")
 
 			temp1=input()
@@ -200,7 +160,7 @@ while recieved !=1:
 
 
 		elif errordetect[1] == "-1":
-			playsound("01")
+			transmit("01")
 			print("NACK send, Press enter to start recording of Retransmission")
 
 			temp1=input()
