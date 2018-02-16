@@ -132,15 +132,15 @@ while send_status !=1:
 		print("NACK (", s, ") recieved, change ACK/NACK status or press enter to start Retransmission of parity/encode: ",  transmit_array)
 		temp1=input()
 		print("Your input is: ",temp1)
-		if temp1 == "a":
+		if temp1 == "1":
 			send_status = 1
-			print ("Transmission Completed Successfully")
+			print("ACK recieved.")
 			break
-		elif temp1 == "c01":
+		elif temp1 == "001":
 			transmit_array = inp_str_encode
-		elif temp1 == "c0":
+		elif temp1 == "00":
 			transmit_array = inp_str_parity[0]
-		elif temp1 == "c1":
+		elif temp1 == "01":
 			transmit_array = inp_str_parity[1]
 
 		if temp1 != "":
@@ -153,15 +153,15 @@ while send_status !=1:
 		print("ACK recieved, change status or complete???")
 		temp1=input()
 
-		if temp1 == "c01":
+		if temp1 == "001":
 			transmit_array = inp_str_encode
-		elif temp1 == "c0":
+		elif temp1 == "00":
 			transmit_array = encoder(inp_str_parity[0]) 
-		elif temp1 == "c1":
+		elif temp1 == "01":
 			transmit_array = encoder(inp_str_parity[1])
-		elif temp1 == "a" or temp1 == "":
+		elif temp1 == "1" or temp1 == "":
 			send_status = 1
-			print ("Transmission Completed Successfully")
 			break
 
 print ("Transmission Completed Successfully")
+print("Thank You")

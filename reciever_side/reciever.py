@@ -34,6 +34,7 @@ def playsound(bitstring):
 			os.system('paplay Networks\ 2.wav')
 
 def transmit(string_array):
+	print("Starting Transmission of: ",  string_array)
 	playsound("1")
 	time.sleep(sleeptime)
 	playsound(string_array)
@@ -105,7 +106,7 @@ recieved = 0
 print("Program Started, Press enter to continue")
 
 temp1=input()
-print("Starating recording for: ", fullrecord, " seconds...")
+print("Starting recording for: ", fullrecord, " seconds...")
 recording(fullrecord)
 print("Done Recording, Now Processing")
 s=os.popen('bash script.sh').read()
@@ -113,12 +114,14 @@ s=os.popen('bash script.sh').read()
 print("Recieved text is: ", s)
 
 s = decoder(s)
-print(s)
+print("Strings after removing sentinel are: ", s)
 
 errordetect = ["0"]*2
+print("Error summary for string1 is : \n================================================")
 errordetect[0] = detecterror(s[0])
+print("================================================ \nError summary for string2 is : \n ================================================")
 errordetect[1] = detecterror(s[1])
-
+print("================================================")
 
 print(errordetect)
 
@@ -148,10 +151,13 @@ while recieved !=1:
 			recording(fullrecord)
 			s=os.popen('bash script.sh').read()
 			s = decoder(s)
-			print(s)
-			errordetect = ["0"]*2
+			print("Strings after removing sentinel are: ", s)
+
+			print("Error summary for latest string1 is : \n================================================")
 			errordetect[0] = detecterror(s[0])
+			print("================================================ \nError summary for latest string2 is : \n ================================================")
 			errordetect[1] = detecterror(s[1])
+			print("================================================")
 
 		elif errordetect[0] == "-1":
 			transmit("00")
@@ -162,7 +168,9 @@ while recieved !=1:
 			recording(halfrecord)
 			s=os.popen('bash script.sh').read()
 			print("Recieved sequence is: ",s)
+			print("Error summary for latest string1 is : \n================================================")
 			errordetect[0] = detecterror(s[0])
+			print("================================================")
 
 
 		elif errordetect[1] == "-1":
@@ -171,19 +179,10 @@ while recieved !=1:
 
 			temp1=input()
 			print("Recieved sequence is: ",s)
+			print("Now Recording ...")
 			recording(halfrecord)
-			print(s)
+			s=os.popen('bash script.sh').read()
+			print("Recieved sequence is: ",s)
+			print("Error summary for latest string1 is : \n================================================")
 			errordetect[1] = detecterror(s[1])
-
-
-		# Print("NACK send, Press enter to start recording of Retransmission")
-
-		# temp1=input()
-		# print("Now Recording ...")
-
-		# recording(20)
-
-
-#waiting for ACK
-
-
+			print("================================================")
