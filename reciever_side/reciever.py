@@ -87,6 +87,8 @@ def detecterror(string):
 			print("error has occurred in: ", string1[:length])
 			return "-1"
 		else:
+			print("Correct String recieved: ", string2)
+			print("Transmission error has occured")
 			return string2
 	except:
 		return "-1"
@@ -97,6 +99,7 @@ def decoder(inp):
 		[c,d]=re.subn('111110','11111',a)
 		return c.split(' ')
 	except:
+		print("Transmission error has occured")
 		return ["00001", "00001"]
 
 fullrecord = 35
@@ -119,7 +122,7 @@ print("Strings after removing sentinel are: ", s)
 errordetect = ["0"]*2
 print("Error summary for string1 is : \n================================================")
 errordetect[0] = detecterror(s[0])
-print("================================================ \nError summary for string2 is : \n ================================================")
+print("================================================ \nError summary for string2 is : \n================================================")
 errordetect[1] = detecterror(s[1])
 print("================================================")
 
@@ -155,7 +158,7 @@ while recieved !=1:
 
 			print("Error summary for latest string1 is : \n================================================")
 			errordetect[0] = detecterror(s[0])
-			print("================================================ \nError summary for latest string2 is : \n ================================================")
+			print("================================================ \nError summary for latest string2 is : \n================================================")
 			errordetect[1] = detecterror(s[1])
 			print("================================================")
 
