@@ -9,9 +9,9 @@ from scipy.io.wavfile import write
 
 # Recording sound
 def recording(time):
+	print("Now Recording for time: ", time, " seconds")
 
 	fs = 44100
-
 	duration = time  # seconds
 	myrecording = sd.rec(int(duration * fs), samplerate=fs, channels=2)
 	sd.default.samplerate = fs
@@ -106,29 +106,42 @@ fullrecord = 35
 halfrecord = 17
 sleeptime = 2
 recieved = 0
+errordetect = ["-1"]*2
+print("Two sequences are: ", errordetect)
 print("Program Started, Press enter to continue")
 
-temp1=input()
-print("Starting recording for: ", fullrecord, " seconds...")
-recording(fullrecord)
-print("Done Recording, Now Processing")
-s=os.popen('bash script.sh').read()
-
-print("Recieved text is: ", s)
-
-s = decoder(s)
-print("Strings after removing sentinel are: ", s)
-
-errordetect = ["0"]*2
-print("Error summary for string1 is : \n================================================")
-errordetect[0] = detecterror(s[0])
-print("================================================ \nError summary for string2 is : \n================================================")
-errordetect[1] = detecterror(s[1])
-print("================================================")
-
-print(errordetect)
-
 while recieved !=1:
+
+	temp1=input()
+	if errordetect[0] == "-1" and errordetect[1] =="-1":
+		recording(fullrecord)
+	else:
+		recording(halfrecord)
+
+	print("Done Recording, Now Processing")
+	s=os.popen('bash script.sh').read()
+
+	print("Recieved text is: ", s)
+
+
+	if errordetect[0] == "-1" and errordetect[1] =="-1":
+		s = decoder(s)
+		print("Strings after removing sentinel are: ", s)
+
+		print("Error summary for string1 is : \n================================================")
+		errordetect[0] = detecterror(s[0])
+		print("================================================ \nError summary for string2 is : \n================================================")
+		errordetect[1] = detecterror(s[1])
+		print("================================================")
+	elif  errordetect[0] == "-1":
+		print("Error summary for latest string1 is : \n================================================")
+		errordetect[0] = detecterror(s[0])
+		print("================================================")
+	elif errordetect[1] == "-1":
+		print("Error summary for latest string1 is : \n================================================")
+		errordetect[1] = detecterror(s[1])
+		print("================================================")
+
 
 	if errordetect[0]!= "-1" and errordetect[1] !="-1":
 		print("Correct sequence recieved: ", errordetect)
@@ -145,47 +158,13 @@ while recieved !=1:
 		temp1=input()
 
 		if errordetect[0] == "-1" and errordetect[1] =="-1":
-
 			transmit("001")
 			print("NACK send, Press enter to start recording of Retransmission")
-			
-			temp1=input()
-			print("Now Recording ...")
-			recording(fullrecord)
-			s=os.popen('bash script.sh').read()
-			s = decoder(s)
-			print("Strings after removing sentinel are: ", s)
-
-			print("Error summary for latest string1 is : \n================================================")
-			errordetect[0] = detecterror(s[0])
-			print("================================================ \nError summary for latest string2 is : \n================================================")
-			errordetect[1] = detecterror(s[1])
-			print("================================================")
 
 		elif errordetect[0] == "-1":
 			transmit("00")
 			print("NACK send, Press enter to start recording of Retransmission")
 
-			temp1=input()
-			print("Now Recording ...")
-			recording(halfrecord)
-			s=os.popen('bash script.sh').read()
-			print("Recieved sequence is: ",s)
-			print("Error summary for latest string1 is : \n================================================")
-			errordetect[0] = detecterror(s[0])
-			print("================================================")
-
-
 		elif errordetect[1] == "-1":
 			transmit("01")
 			print("NACK send, Press enter to start recording of Retransmission")
-
-			temp1=input()
-			print("Recieved sequence is: ",s)
-			print("Now Recording ...")
-			recording(halfrecord)
-			s=os.popen('bash script.sh').read()
-			print("Recieved sequence is: ",s)
-			print("Error summary for latest string1 is : \n================================================")
-			errordetect[1] = detecterror(s[1])
-			print("================================================")

@@ -42,9 +42,9 @@ def parity_maker (string):
 
 # Recording sound
 def recording(time):
+	print("Now Recording for time: ", time, " seconds")
 
 	fs = 44100
-
 	duration = time  # seconds
 	myrecording = sd.rec(int(duration * fs), samplerate=fs, channels=2)
 	sd.default.samplerate = fs
@@ -108,22 +108,22 @@ inp_str_corrupt = sentinel(inp_str_corrupt)
 print("Courrupted string is: ", inp_str_corrupt)
 
 transmit_array = inp_str_corrupt
-transmit(transmit_array)
+
 
 while send_status !=1:
+	transmit(transmit_array)
+
 	print("ACK status: ", send_status)
 	print("Press enter to start recording for ACK")
 	temp1 = input()
-	print("Now Recording")
 	recording(ACKrecordtime)
+	print("Recorded, Now Processing ...")
 	s=os.popen('bash script.sh').read()
 
-	print("Recorded, Now Processing ...")
 	if s[0] == "0":	
 
 		if s[:3] == "001":
 			transmit_array = inp_str_encode
-			print(transmit_array)
 		elif s[:2] == "00":
 			transmit_array = inp_str_parity[0]
 		elif s[:2] == "01":
@@ -146,8 +146,6 @@ while send_status !=1:
 		if temp1 != "":
 			print("Status changed, Press enter to transmit")
 			temp1 = input()
-
-		transmit(transmit_array)
 
 	elif s[0] == "1":
 		print("ACK recieved, change status or complete???")
